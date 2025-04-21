@@ -34,48 +34,33 @@
 
 ---
 
-## 🔍 크롤링 내용
+## 🔍 작품 상세 내용
 
-이디야 공식 웹사이트([https://ediya.com/contents/drink.html](https://ediya.com/contents/drink.html))에서 다음 정보를 수집했습니다:
+### 작품은 동작하는 게임을 작성하는 것으로 다음의 내용을 포함해야 한다.
+1) 게임이 제공하는 기능에 대한 신규 아이디어 설명
+- 기존 실습 코드에서는 단순하게 깨뜨릴 블록들과 움직이는 공 하나, 공을 튕길 패들 하나로 벽돌만 깨는 게임으로 코드가 짜여있다. 여기서 실수로 공을 놓치게 되면 화면상에서 공이 사라지고 게임은 계속되고있어 다시 시작할수도, 게임을 이어서 할 수도 없는 상태에 이르게 된다.
+- 때문에 우리는 이 기존 코드에서 실수하여 공을 놓쳤을때를 대비해 3번의 기회(목숨 시스템)과 그 기회 마저도 다 잃었을 경우 재도전을 할 수 있는 기능을 추가하려고 한다. 또 단순하게 벽돌을 깨기만 하면 재미없을 것을 우려하여 벽돌을 깰 때마다 점수가 올라가는 점수판 기능도 추가하려 한다.
 
-- 음료 이름 (`h2` 태그)
-- 음료 설명 (`p` 태그)
-- 영양 정보 (`div.pro_nutri`)
-- 알러지 정보 (`div.pro_allergy`)
+<br />
+
+2) 게임이 제공하는 UI 화면에 대한 설명
+- 화면 좌측 상단에 점수와 남은 목숨[기회]를 보여주는 UI를 추가하여 게임도중 확인하기 쉽게 기능을 추가하였다.
+- 공을 놓쳐 남은 목숨[기회]이 모두 소모될때까지 벽돌이 남아있다면 Game Over라는 글자와 지금까지 벽돌을 깬 점수를 출력하여 게임이 끝났음을 알려준다. 여기서 새로운 게임을 하기위해 “스페이스바를 눌러 재도전하기“ 라는 UI를 추가해 주였다.
+- 반대로 벽돌을 모두 깨면 게임에서 승리하게 되고. 벽돌을 깬 점수와 함께 “승리!“ 라는 문구를 출력하여 게임에서 이겼음을 알려준다. 마찬가지로 새 게임을 시작할수있게 ”새로운 게임”이라 써진 버튼을 누르면 새로운 게임을 할수있게 안내하는 UI를 추가하였다.
+
+<br />
+
+ 3) 동작이 가능하도록 한 구현 방법
+- ui에 관한 것은 대부분이 BrickBreaker 클래스에 새로운 함수를 정의하여 추가되어있다. 게임 시작전 간단한 게임 설명과 게임시작 버튼을 눌러 게임을 시작하게 하는 “show_start_screen()함수“와 버튼을 누르면 해당 시작화면과 시작버튼을 없애고 start() 함수를 불러오는 “start_game()함수”, 새로운 UI[점수와 목숨]을 추가해줄 “update_ui() 함수”, 게임에서 졌음을 알려주는 “game_over()함수”, 게임에서 이겼음을 알려주는 “game_won()함수”, 게임 재시작시 처음에 나왔던 화면을 만들어주는 “restart_game()함수”등을 정의하여 추가하였다.
+
+- 그 외적인 부분은 공의 속도를 약간 증가시키거나, 패들의 폭을 넓혀 난이도를 조금 줄이는 약간의 수정작업과 벽돌을 깰때마다 점수를 계산하는 반복문 추가, 목숨[기회]를 계산하는 조건문 추가, 게임 승리 조건인 벽돌이 모두 깨졌는지 삭제된 벽돌을 필터링하는 조건문등을 통해 제시했던 아이디어들을 구현시켰다.
+
 
 ---
 
 ## 💻 주요 코드 예시
 
-```python
-import urllib.request
-from bs4 import BeautifulSoup
-import pandas as pd
-
-def Ediya_menu(result):
-    Ediya_url = 'https://ediya.com/contents/drink.html' # 가져올 url 문자열로 입력
-    html = urllib.request.urlopen(Ediya_url) # url을 요청하여 응답받은 html이 담긴 자료를 받아와서 저장함.
-    soupEdiya = BeautifulSoup(html, 'html.parser') #BeautifulSoup의 객체를 생성함.(html을 잘 정리된 형태로 변환)
-    menu_items = soupEdiya.find_all('div', class_='pro_detail') #필요한 항목의 태그와 클래스를 분석하여 파싱한다.
-
-    for menu in menu_items:
-        if menu:
-            menu_name = menu.find('h2').text.strip() # 음료 메뉴 항목에서 음료 이름에 해당하는 부분 추출
-            menu_detail = menu.find('p').text.strip() # 음료 설명에 해당하는 부분 추출
-            menu_nutri = menu.find('div', class_='pro_nutri').text.strip()  # 음료 영양분에 해당하는 부분 추출
-            menu_allergy = menu.find('div', class_='pro_allergy').text.strip() # 알러지 성분에 해당하는 부분 추출
-            result.append([menu_name, menu_detail, menu_nutri, menu_allergy]) # 추출한 결과들을 result에 추가 저장
-
-def main():
-    result = [] #추출한 결과들을 저장할 공간 생성
-    Ediya_menu(result) #위의 Ediya_menu함수 호출
-    Ediya_tbl = pd.DataFrame(result, columns=('name', 'detail', 'nutri', 'allergy')) #추출한 결과를 데이터프레임으로 저장
-    Ediya_tbl.to_csv('Ediya_menu.csv', encoding='utf-8-sig', mode='w', index=False) # Ediya_menu.csv파일로 저장
-
-if __name__ == '__main__':
-    main()
-
-```
+https://github.com/DavidMao8849/Broken_Wall_Game/blob/ca27e4766017649b6c3a8a7911da780f21757c52/breakout%5Btest3%5D.py#L122-L240
 
 ---
 
@@ -90,7 +75,7 @@ if __name__ == '__main__':
 ## 💡 활용 방안
 
 - **파이썬 언어를 이용하여 앱을 만들고 UI 화면을 작성할 수 있는 코딩능력 향상**
-- **풍부한 라이브러리를 이용해서 짧은 시간에 복잡한 기능들을 쉽게 구현가능하여 인공지능의 구현 결과물을 쉽게 만들 수 있음**
+- **풍부한 라이브러리를 이용해서 복잡한 기능들을 빠르고 쉽게 구현가능하여 인공지능의 구현 결과물을 쉽게 만들 수 있음**
 
 ---
 
