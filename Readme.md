@@ -81,4 +81,4 @@ https://github.com/DavidMao8849/Broken_Wall_Game/blob/ca27e4766017649b6c3a8a7911
 
 ## 📎 부록
 
-- 📄 [PBL 결과보고서 PDF](docs/파이썬프로그래밍_1-13주차_PBL_결과보고서(이은우))
+- 📄 [PBL 결과보고서 PDF](https://github.com/DavidMao8849/Break_Out_Game/blob/bc8fe0b9610e44d3dfdab4a3cce8fe230cb1e1a1/docs/%ED%8C%8C%EC%9D%B4%EC%8D%AC%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%201-13%EC%A3%BC%EC%B0%A8%20PBL%20%EA%B2%B0%EA%B3%BC%EB%B3%B4%EA%B3%A0%EC%84%9C(%EC%9D%B4%EC%9D%80%EC%9A%B0).pdf)
